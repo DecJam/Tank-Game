@@ -6,7 +6,15 @@ using System.Threading.Tasks;
 
 namespace Project2D
 {
-	class Turret
+	class Turret : GameObject
 	{
+		public Bullet m_Bullet = null;
+		public Turret(string filename, string name) : base(filename, name)
+		{
+			//starting position 
+		
+
+		}
+
 	}
 }

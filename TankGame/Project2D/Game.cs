@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MathLibrary;
 using Raylib;
 using static Raylib.Raylib;
 
@@ -11,7 +12,8 @@ namespace Project2D
 {
     class Game
     {
-        Stopwatch stopwatch = new Stopwatch();
+	
+		Stopwatch stopwatch = new Stopwatch();
 
         private long currentTime = 0;
         private long lastTime = 0;
@@ -21,10 +23,12 @@ namespace Project2D
 
         private float deltaTime = 0.005f;
 
-        Image logo;
+        //Image image;
         Texture2D texture;
 
-        public Game()
+		Level root;
+		
+		public Game()
         {
         }
 
@@ -37,13 +41,10 @@ namespace Project2D
             {
                 Console.WriteLine("Stopwatch high-resolution frequency: {0} ticks per second", Stopwatch.Frequency);
             }
-
-			//Initialize objects here
-            logo = LoadImage("../Images/aie-logo-dark.jpg");
-            texture = LoadTextureFromImage(logo);
+			root = new Level();
 		}
 
-        public void Shutdown()
+		public void Shutdown()
         {
         }
 
@@ -61,19 +62,22 @@ namespace Project2D
             }
             frames++;
 
-			//Update game objects here          
+			root.Update(deltaTime);
+			root.UpdateTransforms();
 		}
 
         public void Draw()
         {
+			
             BeginDrawing();
 
             ClearBackground(RLColor.WHITE);
 
 			//Draw game objects here
             DrawText(fps.ToString(), 10, 10, 14, RLColor.RED);
-
-			DrawTexture(texture, GetScreenWidth() / 2 - texture.width / 2, GetScreenHeight() / 2 - texture.height / 2, RLColor.WHITE);
+			root.Draw();
+		
+			//DrawTexture(texture, GetScreenWidth() / 2 - texture.width / 2, GetScreenHeight() / 2 - texture.height / 2, RLColor.WHITE);
 
 			EndDrawing();
         }

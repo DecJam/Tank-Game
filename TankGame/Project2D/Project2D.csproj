@@ -36,8 +36,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="MathLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\Library\MathLibrary.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\MathLibrary\MathLibrary\bin\Debug\netstandard2.0\MathLibrary.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -58,7 +58,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Renderer.cs" />
     <Compile Include="Tank.cs" />
-    <Compile Include="Temp_MathLibrary.cs" />
     <Compile Include="Turret.cs" />
   </ItemGroup>
   <ItemGroup>
