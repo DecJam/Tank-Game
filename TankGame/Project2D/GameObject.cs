@@ -14,21 +14,22 @@ namespace Project2D
 	{
 		//translation * rotation * scale
 
+
+
 		protected GameObject m_Parent;
 		protected List<GameObject> m_Children = new List<GameObject>();
 
 		//Matricies
 		protected Matrix3 m_LocalTransform;
 		protected Matrix3 m_GlobalTransform;
-		protected Matrix3 m_Rotation;
 
 		//Drawing
 		protected Image m_Image;
 		protected Texture2D m_Texture;
 
-
+		protected Vector2 m_Velocity;
 		protected String m_name;
-		protected Vector2 m_Position; 
+
 		public GameObject()
 		{
 			m_GlobalTransform.Identity();
@@ -58,10 +59,18 @@ namespace Project2D
 			{
 				m_Parent.m_Children.Add(this);
 				
-			}
-
-			 
+			}	 
 		}
+
+
+		public GameObject GetParent(GameObject child)
+		{
+			GameObject Parent;
+			Parent = child.m_Parent;
+		
+			return Parent;
+		}
+
 		public virtual void Update(float delta)
 		{
 			foreach (GameObject child in m_Children)
@@ -76,6 +85,7 @@ namespace Project2D
 			{
 				m_GlobalTransform = m_Parent.m_GlobalTransform * m_LocalTransform;
 			}
+
 			else
 			{
 				m_GlobalTransform = m_LocalTransform;
@@ -86,15 +96,74 @@ namespace Project2D
 				child.UpdateTransforms();
 			}
 		}
-		 public void Translate(Vector2 delta, bool useGlobal = true)
+		public void Translate(Vector2 direction, float delta)
 		{
-			if(useGlobal)
+		
+			float bSpeed = 300;
+			m_Velocity.x += direction.x * bSpeed * delta;
+			m_Velocity.y += direction.y * bSpeed * delta;
+
+			m_GlobalTransform.m7 += m_Velocity.x * delta;
+			m_GlobalTransform.m8 += m_Velocity.y * delta;
+		}
+	
+
+		 public void Translate(Vector2 direction ,float delta, bool useGlobal = true)
+		{
+			float mSpeed = 200;
+			float drag = 1;
+			float mass = 5;
+
+
+			// Adding Mass and Drag to the Velocity
+			Vector2 forceSum;
+			forceSum.x = direction.x * mSpeed;
+			forceSum.y = direction.y * mSpeed;
+
+			Vector2 acceleration;
+			acceleration.x = forceSum.x / mass;
+			acceleration.y = forceSum.y / mass;
+
+			Vector2 dampening;
+			dampening.x = -(m_Velocity.x * drag);
+			dampening.y = -(m_Velocity.y * drag);
+
+			m_Velocity.x += (acceleration.x + dampening.x) * delta;
+			m_Velocity.y += (acceleration.y + dampening.y) * delta;
+
+
+
+			if (useGlobal)
 			{
 			}
 			else if(!useGlobal)
 			{
-				m_LocalTransform.m7 += delta.x;
-				m_LocalTransform.m8 += delta.y;
+			
+
+				// Acts to spead up the tank under a certain speed
+				if (m_Velocity.x * delta < 200 || m_Velocity.y * delta < 200)
+				{
+					m_LocalTransform.m7 += m_Velocity.x * delta;
+					m_LocalTransform.m8 += m_Velocity.y * delta;
+				}
+				else
+                {
+					return;
+                }
+
+
+				// Speed counter
+				//int fSpeed;
+				//Vector2 distance;
+				//distance.x = (currentPos.x * delta) - (m_Velocity.x * delta);
+				//distance.y = (currentPos.y * delta) - (m_Velocity.y * delta);
+				//fSpeed = (int)(distance.x / 1);
+				//if (fSpeed < 0)
+    //            {
+				//fSpeed = fSpeed * -1;
+    //            }
+				
+				//DrawText(fSpeed.ToString(), 10, 30, 14, RLColor.RED);
 			}
 		}
 
@@ -113,21 +182,11 @@ namespace Project2D
 			}
 		}
 
-
-
-
-
-
-		public void GetParent()
-		{
-
-		}
-
-
 		public List<GameObject> GetChildren()
 		{
 			return m_Children;
 		}
+
 
 		public void AddChild(GameObject child)
 		{
@@ -154,13 +213,23 @@ namespace Project2D
 			return position;
 		}
 
-		public void SetRotation(float rotate)
+		public void Rotate(float rotate, bool useGlobal = true)
 		{
-			Matrix3 rotateZ = new Matrix3();
-			rotateZ.SetRotateZ(rotate);
-			m_LocalTransform = m_LocalTransform * rotateZ;
+			if (useGlobal)
+			{
+			}
+			else if (!useGlobal)
+			{
+				Matrix3 rotateZ = new Matrix3();
+				rotateZ.SetRotateZ(rotate);
+				m_LocalTransform = m_LocalTransform * rotateZ;
+			}
 		}
 
+		public void SetRotation(float rotate)
+		{
+
+		}
 		public void GetRotation()
 		{
 

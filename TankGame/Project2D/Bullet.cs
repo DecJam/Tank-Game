@@ -3,30 +3,35 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MathLibrary;
+using Raylib;
+using static Raylib.Raylib;
 
 namespace Project2D
 {
-	class Bullet 
-	{
+    class Bullet : GameObject
+    {
+        protected Matrix3 m_BulletPos;
+       
+        public Bullet() : base("../Images/Ring.Png", "Bullet")
+        {
+        }
+
+        public override void Update(float delta)
+        {
+          
+            Vector2 direction = new Vector2();
+
+            direction.x += 0;
+            direction.y -= 1;
+
+            Translate(direction, delta);
+            base.Update(delta);
+        }
+
+        public override void OnCollision()
+        {
+        }
+       
 	}
-
-	//public Bullet(string filename) : base(filename)
-	//{
-	//	//starting position 
-	//	m_LocalTransform.m7 = 100;
-	//	m_LocalTransform.m8 = 100;
-
-	//}
-	////public override void OnCollision()
-	////{
-	////}
-
-
-
-
-
-
-
-
-
 }

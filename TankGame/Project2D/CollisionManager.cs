@@ -9,14 +9,14 @@ namespace Project2D
 	static class CollisionManager
 	{
 		private static List<GameObject> m_ObectList = new List<GameObject>();
-		
-
 		public static void AddObject (GameObject obj)
 		{
 			m_ObectList.Add(obj);
 		}
 
-
+		//
+		// Collision Checking
+		//
 
 		public static void CheckCollision()
 		{
@@ -29,13 +29,9 @@ namespace Project2D
 					{
 						continue;
 					}
-
 					//test collision
-
-
 				}
 			}
 		}
-
 	}
 }

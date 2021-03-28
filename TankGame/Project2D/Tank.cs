@@ -16,17 +16,15 @@ namespace Project2D
 		{
 			m_LocalTransform.m7 = 300;
 			m_LocalTransform.m8 = 300;
-			m_Turret = new Turret("../Images/Sting.jpg", "Turret");
+			m_Turret = new Turret();
 			m_Turret.SetParent(this);
 		}
-
 	
-
 		public override void Update(float delta)
 		{
 			Vector2 direction = new Vector2();
-			float rotation;
-
+			float rotation = 0;
+			float rSpeed = 60;
 
 			// Drive forward 
 			if (IsKeyDown(KeyboardKey.KEY_W))
@@ -52,23 +50,22 @@ namespace Project2D
 				direction.x += 1;
 			}
 
-			
-
+		
 			// Rotate left
 			if (IsKeyDown(KeyboardKey.KEY_Q))
 			{
-
+				rotation -= 0.005f;
 			}
 
 			// Rotate right
 			if (IsKeyDown(KeyboardKey.KEY_E))
 			{
-
+				rotation += 0.005f;
 			}
-
-
-			Translate(direction * 200 * delta, false);
-			base.Update(delta);
+		
+			Translate(direction, delta, false);
+			Rotate(rotation * rSpeed * delta, false);
+            base.Update(delta);
 		}
 		//public override void OnCollision(GameObject otherObj)
 		//{
