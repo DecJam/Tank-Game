@@ -16,58 +16,62 @@ namespace Project2D
 		{
 			m_LocalTransform.m7 = 300;
 			m_LocalTransform.m8 = 300;
-			m_Turret = new Turret("../Images/Sting.jpg", "Turret");
+			m_Turret = new Turret();
 			m_Turret.SetParent(this);
+		
 		}
-
 	
-
 		public override void Update(float delta)
 		{
-			Vector2 direction = new Vector2();
-			float rotation;
-
-
-			// Drive forward 
-			if (IsKeyDown(KeyboardKey.KEY_W))
+			if (m_IsAlive == true)
 			{
-				direction.y -= 1;
+				Vector2 direction = new Vector2();
+				float rotation = 0;
+				float rSpeed = 60;
+
+				// Drive forward 
+				if (IsKeyDown(KeyboardKey.KEY_W))
+				{
+					direction.y -= 1;
+				}
+
+				// Drive backward
+				if (IsKeyDown(KeyboardKey.KEY_S))
+				{
+					direction.y += 1;
+				}
+
+				//// Slide left
+				//if (IsKeyDown(KeyboardKey.KEY_A))
+				//{
+				//	direction.x -= 1;
+				//}
+
+				//// Slide right
+				//if (IsKeyDown(KeyboardKey.KEY_D))
+				//{
+				//	direction.x += 1;
+				//}
+
+
+				// Rotate left
+				if (IsKeyDown(KeyboardKey.KEY_A))
+				{
+					rotation -= 0.005f;
+				}
+
+				// Rotate right
+				if (IsKeyDown(KeyboardKey.KEY_D))
+				{
+					rotation += 0.005f;
+				}
+
+				Translate(direction, delta, false);
+				Rotate(rotation * rSpeed * delta, false);
+				
 			}
-
-			// Drive backward
-			if (IsKeyDown(KeyboardKey.KEY_S))
-			{
-				direction.y += 1;
-			}
-
-			// Slide left
-			if (IsKeyDown(KeyboardKey.KEY_A))
-			{
-				direction.x -= 1;
-			}
-
-			// Slide right
-			if (IsKeyDown(KeyboardKey.KEY_D))
-			{
-				direction.x += 1;
-			}
-
-			
-
-			// Rotate left
-			if (IsKeyDown(KeyboardKey.KEY_Q))
-			{
-
-			}
-
-			// Rotate right
-			if (IsKeyDown(KeyboardKey.KEY_E))
-			{
-
-			}
-
-
-			Translate(direction * 200 * delta, false);
+			UpdateMinMax();
+			CollisionManager.CheckCollision();
 			base.Update(delta);
 		}
 		//public override void OnCollision(GameObject otherObj)
@@ -81,7 +85,13 @@ namespace Project2D
 		//	// Change diretion
 		//	m_velocity
 		//}
+		public override void OnCollision(GameObject obj2)
+		{
+			obj2.SetAlive(false);
+
+		}
 	}
+}
 
 	
-}
+

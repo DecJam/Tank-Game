@@ -14,6 +14,7 @@ namespace Project2D
 		{
 			m_Tank = new Tank();		
 			m_Tank.SetParent(this);
+			CollisionManager.AddObject(m_Tank);
 		}
 	}
 }

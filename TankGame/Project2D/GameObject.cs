@@ -20,28 +20,74 @@ namespace Project2D
 		//Matricies
 		protected Matrix3 m_LocalTransform;
 		protected Matrix3 m_GlobalTransform;
-		protected Matrix3 m_Rotation;
 
 		//Drawing
 		protected Image m_Image;
 		protected Texture2D m_Texture;
 
+		protected Vector2 m_Min;
+		protected Vector2 m_Max;
+		protected Vector2 m_PreviousPos;
 
-		protected String m_name;
-		protected Vector2 m_Position; 
+
+		protected Vector2 m_Velocity;
+
+		protected string m_name;
+
+		protected bool m_IsAlive = true;
+
 		public GameObject()
 		{
 			m_GlobalTransform.Identity();
 			m_LocalTransform.Identity();
 		}
 
-		public GameObject(string filename, String name)
+		public GameObject(string filename, string name)
 		{
 			m_GlobalTransform.Identity();
 			m_LocalTransform.Identity();
 			m_Image = LoadImage(filename);
 			m_Texture = LoadTextureFromImage(m_Image);
 			m_name = name;
+
+
+			m_Min.x = -(m_Texture.width * 0.5f);
+			m_Min.y = -(m_Texture.height * 0.5f);
+
+			m_Max.x = (m_Texture.width * 0.5f);
+			m_Max.y = (m_Texture.height * 0.5f);
+		}
+
+
+		public bool GetAlive()
+		{
+			return m_IsAlive;
+		}
+
+		public void UpdateMinMax()
+		{
+			m_Min.x = -(m_Texture.width * 0.5f);
+			m_Min.y = -(m_Texture.height * 0.5f);
+
+			m_Max.x = (m_Texture.width * 0.5f);
+			m_Max.y = (m_Texture.height * 0.5f);
+		}
+		public void SetAlive(bool alive)
+		{
+			alive = m_IsAlive;
+		}
+
+
+		public Vector2 GetMin()
+		{
+
+			return m_Min;
+		}
+
+		public Vector2 GetMax()
+		{
+
+			return m_Max;
 		}
 
 		public void SetParent(GameObject newParent)
@@ -56,45 +102,130 @@ namespace Project2D
 
 			if (m_Parent != null)
 			{
-				m_Parent.m_Children.Add(this);
-				
-			}
-
-			 
+				m_Parent.m_Children.Add(this);	
+			}	
+			
 		}
+
+
+		public GameObject GetParent()
+		{
+
+			return m_Parent;
+
+		}
+
 		public virtual void Update(float delta)
 		{
-			foreach (GameObject child in m_Children)
+			int count = m_Children.Count;
+			for(int i = 0; i < count; i ++)
 			{
-				child.Update(delta);
+				m_Children[i].Update(delta);
 			}
 		}
 
 		public void UpdateTransforms()
 		{
+
 			if (m_Parent != null)
 			{
 				m_GlobalTransform = m_Parent.m_GlobalTransform * m_LocalTransform;
 			}
+
 			else
 			{
 				m_GlobalTransform = m_LocalTransform;
 			}
 
-			foreach(GameObject child in m_Children)
+			foreach (GameObject child in m_Children)
 			{
 				child.UpdateTransforms();
 			}
+			if (m_Parent != null)
+			{
+				m_PreviousPos = GetPosition() - m_Parent.GetPosition();
+			}
+			else
+			{
+
+			}
+
 		}
-		 public void Translate(Vector2 delta, bool useGlobal = true)
+        public void Translate(Vector2 direction, float delta)
+        {
+            float bSpeed = 400;
+            m_Velocity.x += direction.x * bSpeed * delta;
+            m_Velocity.y += direction.y * bSpeed * delta;
+
+            m_LocalTransform.m7 += m_Velocity.x * delta;
+            m_LocalTransform.m8 += m_Velocity.y * delta;
+        }
+
+
+        public void Translate(Vector2 direction ,float delta, bool useGlobal = true)
 		{
-			if(useGlobal)
+			float mSpeed = 200;
+			float drag = 1;
+			float mass = 5;
+
+			//Vector2 currentPos;
+			//currentPos.x = m_LocalTransform.m7;
+			//currentPos.y = m_LocalTransform.m8;
+
+			// Adding Mass and Drag to the Velocity
+			Vector2 forceSum;
+			forceSum.x = direction.x * mSpeed;
+			forceSum.y = direction.y * mSpeed;
+
+			Vector2 acceleration;
+			acceleration.x = forceSum.x / mass;
+			acceleration.y = forceSum.y / mass;
+
+			Vector2 dampening;
+			dampening.x = -(m_Velocity.x * drag);
+			dampening.y = -(m_Velocity.y * drag);
+
+			m_Velocity.x += (acceleration.x + dampening.x) * delta;
+			m_Velocity.y += (acceleration.y + dampening.y) * delta;
+
+
+
+			if (useGlobal)
 			{
 			}
 			else if(!useGlobal)
 			{
-				m_LocalTransform.m7 += delta.x;
-				m_LocalTransform.m8 += delta.y;
+			
+
+				// Acts to spead up the tank under a certain speed
+				if (m_Velocity.x * delta < 200 || m_Velocity.y * delta < 200)
+				{
+					Matrix3 translate = new Matrix3();
+					translate.Identity();
+
+					translate.m7 = m_Velocity.x * delta;
+					translate.m8 = m_Velocity.y * delta;
+
+					m_LocalTransform = m_LocalTransform * translate;
+
+
+				}
+				else
+                {
+					return;
+                }
+
+
+				//Speed counter
+			//	int fSpeed;
+			//	Vector2 distance;
+			//	distance.x = (currentPos.x * delta) - (m_Velocity.x * delta);
+			//	distance.y = (currentPos.y * delta) - (m_Velocity.y * delta);
+			//	fSpeed = (int)(distance.x / delta);
+
+	
+
+			//	DrawText(fSpeed.ToString(), 10, 30, 14, RLColor.RED);
 			}
 		}
 
@@ -105,6 +236,7 @@ namespace Project2D
 
 		public void Draw()
 		{
+		
 			Renderer.DrawTexture(m_Texture, m_GlobalTransform, RLColor.WHITE.ToColor());
 
 			foreach (GameObject obj in GetChildren())
@@ -113,21 +245,11 @@ namespace Project2D
 			}
 		}
 
-
-
-
-
-
-		public void GetParent()
-		{
-
-		}
-
-
 		public List<GameObject> GetChildren()
 		{
 			return m_Children;
 		}
+
 
 		public void AddChild(GameObject child)
 		{
@@ -146,21 +268,26 @@ namespace Project2D
 			position.m8 = pos.y;
 		}
 
-		public Vector2 GetPosition(Matrix3 current)
+		public Vector2 GetPosition()
 		{
 			Vector2 position;
-			position.x = current.m7;
-			position.y = current.m8;
+			position.x = m_LocalTransform.m7;
+			position.y = m_LocalTransform.m8;
 			return position;
 		}
 
-		public void SetRotation(float rotate)
+		public void Rotate(float rotate, bool useGlobal = true)
 		{
-			Matrix3 rotateZ = new Matrix3();
-			rotateZ.SetRotateZ(rotate);
-			m_LocalTransform = m_LocalTransform * rotateZ;
+			if (useGlobal)
+			{
+			}
+			else if (!useGlobal)
+			{
+				Matrix3 rotateZ = new Matrix3();
+				rotateZ.SetRotateZ(rotate);
+				m_LocalTransform = m_LocalTransform * rotateZ;
+			}
 		}
-
 		public void GetRotation()
 		{
 
@@ -183,7 +310,7 @@ namespace Project2D
 		
 
 
-		public virtual void OnCollision()
+		public virtual void OnCollision(GameObject obj2)
 		{
 		}
 		
