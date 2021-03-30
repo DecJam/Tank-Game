@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,13 +11,12 @@ namespace Project2D
 {
 	class Bullet : GameObject
     {
-		int m_BulletCount = 0;
-		int m_MaxBulletCount = 10;
-		Vector2 m_AimDirection;
+		protected Vector2 m_AimDirection;
+		protected float m_TimeRemaining = 10;
+		protected int m_BulletCount = 0;
 
 		public Bullet(Turret turret) : base("../Images/Ring.png", "Bullet")
 		{
-			m_BulletCount++;
 			m_LocalTransform = turret.GetTranform();
 			
 			m_AimDirection.x = m_LocalTransform.m4;
@@ -26,68 +24,60 @@ namespace Project2D
 			m_AimDirection.Normalize();
 		}
 
-		public void BulletCheck()
+
+		public void AddBullet()
 		{
-			if (m_BulletCount > m_MaxBulletCount)
-			{
-				m_Children[6].SetAlive(false);
-			}
+			m_BulletCount++;
 		}
+		public void RemoveBullet()
+		{
+			m_BulletCount--;
+		}
+		public void BulletTimeout(float delta)
+		{
+			if (m_TimeRemaining > 0)
+			{
+				m_TimeRemaining -= delta;
+			}
+
+			else
+			{
+				SetAlive(false);
+				CollisionManager.RemoveObject(this);
+			}
+			
+		}
+		
 	
         public override void Update(float delta)
-        {         
-     
-            Translate(m_AimDirection, delta);
-			BulletCheck();
-			UpdateMinMax();
-			CollisionManager.CheckCollision();
+        {
+			if (GetAlive() == true)
+			{
+				Translate(m_AimDirection, delta);
+				BulletTimeout(delta);
+				UpdateMinMax();
+				CollisionManager.CheckCollision();
+			}
 			base.Update(delta);
         }
 
         public override void OnCollision(GameObject obj2)
         {
-			this.SetAlive(false);
-			obj2.SetAlive(false);
+			if (obj2.GetName() == "Tank")
+			{ }
+			else if (obj2.GetName() == "Turret")
+			{ }
+			else if (obj2.GetName() == "Bullet")
+			{ }
+			else 
+			{
+				RemoveBullet();
+				SetAlive(false);
+				obj2.SetAlive(false);
+				CollisionManager.RemoveObject(obj2);
+			}
+		
         }
        
 	}
 }
-=======
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MathLibrary;
-using Raylib;
-using static Raylib.Raylib;
-
-namespace Project2D
-{
-    class Bullet : GameObject
-    {
-        protected Matrix3 m_BulletPos;
-       
-        public Bullet() : base("../Images/Ring.Png", "Bullet")
-        {
-        }
-
-        public override void Update(float delta)
-        {
-          
-            Vector2 direction = new Vector2();
-
-            direction.x += 0;
-            direction.y -= 1;
-
-            Translate(direction, delta);
-            base.Update(delta);
-        }
-
-        public override void OnCollision()
-        {
-        }
-       
-	}
-}
->>>>>>> main

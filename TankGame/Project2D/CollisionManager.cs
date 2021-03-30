@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,14 +25,11 @@ namespace Project2D
 		//
 
 		public static void CheckCollision()
-		{
-			int count1 = m_ObectList.Count;
-			for (int x = 0; x < count1; x++)
+		{			   
+			for (int x = 0; x < m_ObectList.Count; x++)
 			{
-				GameObject obj1 = m_ObectList[x];
-
-				int count = m_ObectList.Count;
-				for (int i = 0; i < count; i++)
+				GameObject obj1 = m_ObectList[x];				
+				for (int i = 0; i < m_ObectList.Count; i++)
 				{
 					GameObject obj2 = m_ObectList[i];
 					//dont have objects collide with themselfs
@@ -60,42 +56,3 @@ namespace Project2D
 		}
 	}
 }
-=======
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Project2D
-{
-	static class CollisionManager
-	{
-		private static List<GameObject> m_ObectList = new List<GameObject>();
-		public static void AddObject (GameObject obj)
-		{
-			m_ObectList.Add(obj);
-		}
-
-		//
-		// Collision Checking
-		//
-
-		public static void CheckCollision()
-		{
-			foreach(GameObject obj1 in m_ObectList)
-			{
-				foreach(GameObject obj2 in m_ObectList)
-				{
-					//dont have objects collide with themselfs
-					if (obj1 == obj2)
-					{
-						continue;
-					}
-					//test collision
-				}
-			}
-		}
-	}
-}
->>>>>>> main
