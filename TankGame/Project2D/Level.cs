@@ -8,13 +8,20 @@ namespace Project2D
 {
 	class Level : GameObject
 	{
-		private Tank m_Tank = null;
+        #region "Variables"
+        private Tank m_Tank = null;
+        #endregion
 
-		public Level() : base("", "")
+        #region "Constructor"
+        
+        // Loaded constructor for level
+        public Level() : base("../Images/BackGround.png", "Level")
 		{
+            //Initalizes a new tank and sets its parent
 			m_Tank = new Tank();		
 			m_Tank.SetParent(this);
 			CollisionManager.AddObject(m_Tank);
 		}
-	}
+        #endregion
+    }
 }

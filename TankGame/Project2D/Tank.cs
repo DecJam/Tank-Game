@@ -11,18 +11,26 @@ namespace Project2D
 {
 	class Tank : GameObject
 	{
-		public Turret m_Turret = null;
-		public Tank() : base("../Images/Smeagol.jpg", "Tank")
+        #region "Variables"
+        public Turret m_Turret = null;
+        #endregion
+
+        #region "Constructor"
+        public Tank() : base("../Images/Tank.png", "Tank")
 		{
+			// Sets tanks spawn position and spawns turret
 			m_LocalTransform.m7 = 300;
 			m_LocalTransform.m8 = 300;
 			m_Turret = new Turret();
 			m_Turret.SetParent(this);
-		
 		}
-	
-		public override void Update(float delta)
+        #endregion
+
+        #region "Update function"
+        // Tanks update function
+        public override void Update(float delta)
 		{
+			// Checks if tank is alive
 			if (GetAlive() == true)
 			{
 				Vector2 direction = new Vector2();
@@ -41,19 +49,6 @@ namespace Project2D
 					direction.y += 1;
 				}
 
-				//// Slide left
-				//if (IsKeyDown(KeyboardKey.KEY_A))
-				//{
-				//	direction.x -= 1;
-				//}
-
-				//// Slide right
-				//if (IsKeyDown(KeyboardKey.KEY_D))
-				//{
-				//	direction.x += 1;
-				//}
-
-
 				// Rotate left
 				if (IsKeyDown(KeyboardKey.KEY_A))
 				{
@@ -66,26 +61,17 @@ namespace Project2D
 					rotation += 0.005f;
 				}
 
+				// Moveand rotates the tank
 				Translate(direction, delta, false);
 				Rotate(rotation * rSpeed * delta, false);
 
-
+				// updates collision box and checks collision
 				UpdateMinMax();
-				CollisionManager.CheckCollision();
 			}
+			// updates its base
 			base.Update(delta);
 		}
-		//public override void OnCollision(GameObject otherObj)
-		//{
-		//	// Circle collision - Calculate normal
-		//	Vector2 v2Normal = otherObj.GetPosition() - GetPosition();
 
-		//	// calculate reflection
-		//	Vector2 reflection = -2.0f * m_v2Velocity.Dot(v2Normal) * v2Normal + m_Velocity;
-
-		//	// Change diretion
-		//	m_velocity
-		//}
 		public override void OnCollision(GameObject obj2)
 		{
 			if (obj2.GetName() == "Turret")
@@ -98,13 +84,11 @@ namespace Project2D
 				CollisionManager.RemoveObject(obj2);
 			}
 			else
-			{
-				
-				
-				
+			{							
 			}
 
 		}
+		#endregion
 	}
 }
 

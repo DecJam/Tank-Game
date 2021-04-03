@@ -12,8 +12,9 @@ namespace Project2D
 {
     class Game
     {
-	
-		Stopwatch stopwatch = new Stopwatch();
+
+        #region "Variables"
+        Stopwatch stopwatch = new Stopwatch();
 
         private long currentTime = 0;
         private long lastTime = 0;
@@ -23,15 +24,21 @@ namespace Project2D
 
         private float deltaTime = 0.005f;
 
-        //Image image;
-        //Texture2D texture;
-
 		protected Level root;
-		
-		public Game()
+        #endregion
+
+        #region "Constuctor"
+
+        // Default constructor to create object
+        public Game()
         {
         }
 
+        #endregion
+
+        #region "Run and update functions"
+
+        // Initialises the level and a stopwatch 
         public void Init()
         {
             stopwatch.Start();
@@ -44,45 +51,43 @@ namespace Project2D
 			root = new Level();
 		}
 
+        // Calls when game shutsdown
 		public void Shutdown()
         {
         }
 
+        // Is called to update, updates deltatime.
         public void Update()
         {
+            // Calculates deltatime
             lastTime = currentTime;
             currentTime = stopwatch.ElapsedMilliseconds;
             deltaTime = (currentTime - lastTime) / 1000.0f;
             timer += deltaTime;
+
             if (timer >= 1)
             {
                 fps = frames;
                 frames = 0;
                 timer -= 1;
             }
-            frames++;
 
-	
+            //  Adds a frame and calls all the levels updates
+            frames++;	
 			root.Update(deltaTime);
 			root.UpdateTransforms();
 		}
 
+        // Draws the background and its objects
         public void Draw()
         {
-			
+            // Clears background, draws fps counter and draws the level with its obects
             BeginDrawing();
-
             ClearBackground(RLColor.WHITE);
-
-			//Draw game objects here
             DrawText(fps.ToString(), 10, 10, 14, RLColor.RED);
-
-			root.Draw();
-		
-			//DrawTexture(texture, GetScreenWidth() / 2 - texture.width / 2, GetScreenHeight() / 2 - texture.height / 2, RLColor.WHITE);
-
-			EndDrawing();
+            root.Draw();
+            EndDrawing();
         }
-
     }
+    #endregion
 }

@@ -10,14 +10,17 @@ namespace Project2D
 {
     class Program
     {
+        #region "Initialises"
+        // runs as aplication opens
         static void Main(string[] args)
         {
             Game game = new Game();
 
             InitWindow(640, 480, "Tank Game");
-
+            
             game.Init();
 
+            // Call the first Update functions to loop whilst the window is open
             while (!WindowShouldClose())
             {
                 game.Update();
@@ -28,5 +31,6 @@ namespace Project2D
 
             CloseWindow();
         }
+        #endregion
     }
 }
